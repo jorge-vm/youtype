@@ -8,14 +8,18 @@ import { Router } from '@angular/router';
   styleUrls: ['./register.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class RegisterComponent{
+export class RegisterComponent {
   registerData = {}
 
   constructor(private authService: AuthService, private router: Router) { }
 
   post() {
-    this.authService.registerUser(this.registerData);
-    this.router.navigate(['/login']);
+    this.authService.registerUser(this.registerData)
+      .subscribe(x => {
+        alert(`User successfully created.`);
+        this.router.navigate(['/']);
+      }, (errorMsg: string) => {
+        alert(errorMsg);
+      })
   }
-
 }

@@ -9,13 +9,22 @@ import { ActivatedRoute } from '@angular/router'
   encapsulation: ViewEncapsulation.None
 })
 export class MessagesComponent implements OnInit {
+  messages: any;
 
   constructor( private apiService: ApiService, private route: ActivatedRoute) {}
   
     ngOnInit(){
       var userId = this.route.snapshot.params.id;
       
-      this.apiService.getMessages(userId);
+      this.apiService.getMessages(userId)
+      .subscribe(
+        m => {
+          this.messages = m;
+        },
+        (errorMsg: string) => {
+          alert(errorMsg);
+        }
+      );
     }
 
 }

@@ -9,9 +9,9 @@ import { Router } from '@angular/router';
   encapsulation: ViewEncapsulation.None
 })
 export class LoginComponent implements OnInit {
-  
-  ngOnInit(){
-    this.redirectIfLoggedIn();
+
+  ngOnInit() {
+
   }
 
   loginData = {}
@@ -19,14 +19,12 @@ export class LoginComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) { }
 
   post() {
-    this.authService.loginUser(this.loginData);
-    this.redirectIfLoggedIn();
+    this.authService.loginUser(this.loginData)
+      .subscribe(x => {
+        alert(`Welcome to YouType!`);
+        this.router.navigate(['/']);
+      }, (errorMsg: string) => {
+        alert(errorMsg);
+      });
   }
-
-  redirectIfLoggedIn(){
-    if(this.authService.isAuthenticated){
-      this.router.navigate(['/']);
-    }
-  }
-
 }

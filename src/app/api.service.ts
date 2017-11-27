@@ -1,33 +1,64 @@
 import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { environment } from '../environments/environment'
+import { Observable } from 'rxjs/Observable';
+
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/share';
 
 @Injectable()
 export class ApiService {
-  messages = []
-  users = []
-  path = environment.path
 
-  constructor( private http: HttpClient) {}
+    postsUrl = environment.path + '/posts';
+    usersUrl = environment.path + '/users';
 
-  getMessages(userId) {
-      this.http.get<any>(this.path + '/posts/' + userId).subscribe(res => {
-          this.messages = res
-      })
-  }
+    constructor(private http: HttpClient) { }
 
-  postMessage(message) {
-      this.http.post(this.path + '/posts', message).subscribe(res => {
-      })
-  }
+    getMessages(userId) {
+        const url = `${this.postsUrl}/${userId}`;
 
-  getUsers() {
-      this.http.get<any>(this.path + '/users').subscribe(res => {
-          this.users = res
-      })
-  }
+        return this.http.get<any>(url)
+            .catch(error => this.handleError(error));
+    }
 
-  getProfile(id) {
-      return this.http.get(this.path + '/users/' + id)
-  }
+    postMessage(message) {
+        const result = this.http.post(this.postsUrl, message)
+            .share().catch(error => this.handleError(error));
+
+        result.subscribe();
+        return result;
+    }
+
+    getUsers() {
+        return this.http.get<any>(this.usersUrl)
+            .catch(error => this.handleError(error));
+
+    }
+
+    getProfile(userId) {
+        const url = `${this.usersUrl}/${userId}`;
+        return this.http.get(url)
+            .catch(error => this.handleError(error));
+    }
+
+    follow(profileId) {
+        const url = `${this.usersUrl}/follow`;
+        const result = this.http.post(url, { profileId })
+            .share().catch(error => this.handleError(error));
+
+        result.subscribe();
+        return result;
+    }
+
+    getContent() {
+        const url = `${this.postsUrl}/content`;
+        return this.http.get<any>(url)
+            .catch(error => this.handleError(error));
+    }
+
+    private handleError(error: any): Observable<any> {
+        console.log(`An error occurred: ${error}`);
+        return Observable.throw('Something bad happened; please check the console');
+    }
 }

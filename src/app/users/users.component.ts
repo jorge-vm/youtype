@@ -8,12 +8,19 @@ import { ApiService } from '../api.service';
   encapsulation: ViewEncapsulation.None
 })
 export class UsersComponent implements OnInit {
+  users: any;
 
   constructor( private apiService: ApiService) {}
   
     ngOnInit(){
-      this.apiService.getUsers();
+      this.apiService.getUsers()
+      .subscribe(
+        users => {
+          this.users = users;
+        },
+        (errorMsg: string) => {
+          alert(errorMsg);
+        }
+      );
     }
-
-
 }
